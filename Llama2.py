@@ -4,13 +4,16 @@ import torch
 
 import transformers
 
-from transformers import LlamaForCausalLM, LlamaTokenizer
+from transformers import AutoModelForCausalLM, LlamaForCausalLM, LlamaTokenizer
 
 
 def main():
     print("is cuda available? cudaAvailable=", torch.cuda.is_available())
     model_path = os.environ.get("LLAMA_MODELS") + "\\llama-2-7b-chat-hf"
-    model = LlamaForCausalLM.from_pretrained(model_path)
+    # model = LlamaForCausalLM.from_pretrained(model_path)
+    model = AutoModelForCausalLM.from_pretrained(model_path,
+                                                 torch_dtype=torch.bfloat16,
+                                                 attn_implementation="flash_attention_2", )
 
     tokenizer = LlamaTokenizer.from_pretrained(model_path)
     pipeline = transformers.pipeline("text-generation",
